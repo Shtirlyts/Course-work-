@@ -30,11 +30,11 @@ typedef struct iot_platform IoTPlatform;
 void print_menu();
 int load_from_file(IoTPlatform platforms[], int* count, const char* filename);
 int save_to_file(IoTPlatform platforms[], int count, const char* filename);
-int view_all_records(IoTPlatform platforms[], int count);
+void view_all_records(IoTPlatform platforms[], int count);
 int search_by_cost(IoTPlatform platforms[], int count, float min_val, float max_val, IoTPlatform results[], int* found_count);
 int search_by_devices(IoTPlatform platforms[], int count, int min_val, int max_val, IoTPlatform results[], int* found_count);
 int search_by_latency(IoTPlatform platforms[], int count, int min_val, int max_val, IoTPlatform results[], int* found_count);
-int sort_records(IoTPlatform platforms[], int count);
+void sort_records(IoTPlatform platforms[], int count);
 int add_record(IoTPlatform platforms[], int* count);
 int input_platform(IoTPlatform* p);
 void print_platform(IoTPlatform p);
@@ -80,13 +80,7 @@ int main() {
             break;
 
         case 2:
-            result = view_all_records(platforms, count);
-            if (result == 0) {
-                printf("Нет записей для отображения.\n");
-            }
-            else {
-                printf("Выведено %d записей\n", result);
-            }
+            view_all_records(platforms, count);
             break;
 
         case 3:
@@ -178,14 +172,7 @@ int main() {
             break;
 
         case 4:
-            result = sort_records(platforms, count);
-            if (result == 1) {
-                printf("Данные отсортированы по обратной величине логарифма количества устройств\n");
-                view_all_records(platforms, count);
-            }
-            else {
-                printf("Нет записей для сортировки.\n");
-            }
+            sort_records(platforms, count);
             break;
 
         case 5:
@@ -294,9 +281,10 @@ int save_to_file(IoTPlatform platforms[], int count, const char* filename) {
 }
 
 // Показ записей
-int view_all_records(IoTPlatform platforms[], int count) {
+void view_all_records(IoTPlatform platforms[], int count) {
     if (count == 0) {
-        return 0;
+        printf("Нет записей для отображения\n");
+        return;
     }
 
     printf("\n=== Все записи (%d) ===\n", count);
@@ -304,7 +292,6 @@ int view_all_records(IoTPlatform platforms[], int count) {
         printf("\n--- Запись %d ---", i + 1);
         print_platform(platforms[i]);
     }
-    return count;
 }
 
 // Поиск по диапазону
@@ -376,13 +363,14 @@ int compare_by_inv_log_devices(const void* a, const void* b) {
 }
 
 // Статус сортировки
-int sort_records(IoTPlatform platforms[], int count) {
+void sort_records(IoTPlatform platforms[], int count) {
     if (count == 0) {
-        return 0;
+        printf("Нет записей для сортировки\n");
+        return;
     }
 
     qsort(platforms, count, sizeof(IoTPlatform), compare_by_inv_log_devices);
-    return 1;
+    printf("Платформы отсортированны\n");
 }
 
 // Статус записи
